@@ -1,5 +1,6 @@
 package hu.yijun.view
 
+import hu.yijun.constants.AppPadding
 import hu.yijun.theme.Theme
 import hu.yijun.theme.ThemeManager
 import javax.swing.BoxLayout
@@ -17,6 +18,7 @@ class BottomBar : JPanel() {
         themeToggleButton.apply {
             text = "Toggle Theme"
             addActionListener { ThemeManager.toggle() }
+            border = AppPadding.SMALL_EMPTY_BORDER
         }
 
         layout = BoxLayout(this, BoxLayout.X_AXIS)
