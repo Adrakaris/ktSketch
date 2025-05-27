@@ -1,34 +1,23 @@
 package hu.yijun
 
 import com.formdev.flatlaf.FlatLightLaf
-import hu.yijun.theme.ThemeManager
+import com.formdev.flatlaf.extras.FlatInspector
+import com.formdev.flatlaf.extras.FlatUIDefaultsInspector
 import hu.yijun.theme.Theme
-import javax.swing.JButton
-import javax.swing.JFrame
+import hu.yijun.theme.ThemeManager
+import hu.yijun.view.Sketchbook
 import javax.swing.SwingUtilities
 
 fun main() {
+
+    FlatInspector.install( "ctrl shift alt X" )
+    FlatUIDefaultsInspector.install("ctrl shift alt Y")
+
     SwingUtilities.invokeLater {
         FlatLightLaf.setup()
         ThemeManager.setTheme(Theme.LIGHT)
 
-        val window = JFrame("KtSketchbook")
-        window.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
-        window.setSize(1280, 720)
-
-        val toggleButton = JButton("Toggle Theme").apply {
-            addActionListener { ThemeManager.toggle() }
-        }
-
-        window.add(toggleButton)
+        val window = Sketchbook()
         window.isVisible = true
-    }
-}
-
-private fun ThemeManager.toggle() {
-    if (theme() == Theme.LIGHT) {
-        setTheme(Theme.DARK)
-    } else {
-        setTheme(Theme.LIGHT)
     }
 }
