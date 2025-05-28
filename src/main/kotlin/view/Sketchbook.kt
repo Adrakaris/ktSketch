@@ -41,7 +41,6 @@ class Sketchbook : JPanel() {
 
         gbc.weighty = 0.0
         gbc.fill = GridBagConstraints.HORIZONTAL
-
         gbc.gridy++
         add(bottomBar, gbc)
     }

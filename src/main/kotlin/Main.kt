@@ -6,12 +6,18 @@ import com.formdev.flatlaf.extras.FlatUIDefaultsInspector
 import com.formdev.flatlaf.util.UIScale
 import hu.yijun.theme.Theme
 import hu.yijun.theme.ThemeManager
+import hu.yijun.util.mainModule
 import hu.yijun.view.Sketchbook
+import org.koin.core.context.startKoin
 import javax.swing.JFrame
 import javax.swing.SwingUtilities
 import javax.swing.WindowConstants.EXIT_ON_CLOSE
 
 fun main() {
+    startKoin {
+        modules(mainModule)
+    }
+
     FlatInspector.install("ctrl shift alt X")
     FlatUIDefaultsInspector.install("ctrl shift alt Y")
 
