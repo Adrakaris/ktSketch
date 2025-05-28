@@ -18,7 +18,7 @@ class BottomBar : JPanel() {
         themeToggleButton.apply {
             text = "Toggle Theme"
             addActionListener { ThemeManager.toggle() }
-            border = AppPadding.SMALL_EMPTY_BORDER
+            border = AppPadding.XSMALL_EMPTY_BORDER
         }
 
         layout = BoxLayout(this, BoxLayout.X_AXIS)

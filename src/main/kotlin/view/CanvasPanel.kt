@@ -1,49 +1,82 @@
 package hu.yijun.view
 
 import hu.yijun.constants.AppColours
-import hu.yijun.data.View
 import hu.yijun.presenter.CanvasPresenter
+import hu.yijun.util.IntCoord
+import hu.yijun.util.View
 import hu.yijun.util.koinInject
+import hu.yijun.util.toIntCoord
 import org.koin.core.component.KoinComponent
-import java.awt.BorderLayout
-import java.awt.Canvas
+import java.awt.Dimension
+import java.awt.Graphics
 import java.awt.Graphics2D
 import java.awt.Image
+import java.awt.Rectangle
+import java.awt.event.ComponentAdapter
+import java.awt.event.ComponentEvent
 import java.awt.geom.AffineTransform
 import javax.swing.JPanel
 
 interface CanvasView {
-    fun drawImage(image: Image, imageView: View)
+    val canvasSize: IntCoord
+
+    fun draw(image: Image, imageView: View)
+    fun clear()
 }
 
 class CanvasPanel(
     private val presenter: CanvasPresenter = koinInject()
 ) : JPanel(), CanvasView, KoinComponent {
-    private val canvas = Canvas()
+
+    private var image: Image? = null
+    private var imageView: View? = null
 
     init {
         presenter.attach(this)
 
         setColours()
         initComponents()
+
+        addComponentListener(CanvasAdapter(size))
     }
 
-    override fun drawImage(image: Image, imageView: View) {
-        println("Boop")
-        val graphics = canvas.graphics as Graphics2D? ?: return
+    override val canvasSize: IntCoord get() = size.toIntCoord()
 
-        val scaleX = graphics.clipBounds.width / imageView.w
-        val scaleY = graphics.clipBounds.height / imageView.h
+    override fun draw(image: Image, imageView: View) {
+        this.image = image
+        this.imageView = imageView
+        repaint()
+    }
 
+    override fun clear() {
+        this.image = null
+        this.imageView = null
+        repaint()
+    }
+
+    override fun paintComponent(g: Graphics?) {
+        super.paintComponent(g)
+
+        val graphics = g as Graphics2D
+
+        if (image != null && imageView != null) {
+            val transform = transformViewToFit(graphics.clipBounds, imageView!!)
+            graphics.drawImage(image, transform, null)
+        }
+    }
+
+    override fun updateUI() {
+        super.updateUI()
+        setColours()
+    }
+
+    private fun transformViewToFit(clipBounds: Rectangle, view: View): AffineTransform {
+        val scaleX = clipBounds.width / view.w
+        val scaleY = clipBounds.height / view.h
         val transform = AffineTransform()
-        transform.translate(-imageView.x * scaleX, -imageView.y * scaleY)
+        transform.translate(-view.x * scaleX, -view.y * scaleY)
         transform.scale(scaleX, scaleY)
-
-        graphics.drawImage(image, transform, null)
-
-        graphics.dispose()
-
-        canvas.repaint()
+        return transform
     }
 
     private fun setColours() {
@@ -51,14 +84,18 @@ class CanvasPanel(
     }
 
     private fun initComponents() {
-        layout = BorderLayout()
-
-        add(canvas, BorderLayout.CENTER)
-
     }
 
-    override fun updateUI() {
-        super.updateUI()
-        setColours()
+    private inner class CanvasAdapter(initialSize: Dimension) : ComponentAdapter() {
+        private var prevSize = initialSize
+
+        override fun componentResized(e: ComponentEvent?) {
+            super.componentResized(e)
+            val newSize = e?.component?.size ?: return
+            if (newSize == prevSize) return
+
+            presenter.onResize(newSize.toIntCoord())
+            prevSize = newSize
+        }
     }
 }

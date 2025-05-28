@@ -1,29 +1,54 @@
 package hu.yijun.presenter
 
-import hu.yijun.data.View
+import hu.yijun.model.CanvasModel
+import hu.yijun.util.IntCoord
+import hu.yijun.util.unscaleIntCoord
 import hu.yijun.view.CanvasView
-import java.awt.Color
-import java.awt.image.BufferedImage
 
 class CanvasPresenter {
     private var canvas: CanvasView? = null
-
-    private val im = BufferedImage(50, 25, BufferedImage.TYPE_INT_ARGB)
-    private val vi = View(-10.0, -10.0, 100.0, 100.0)
-
-    init {
-        val g = im.graphics
-        g.color = Color.RED
-        g.fillRect(0, 0, 50, 25)
-        g.dispose()
-    }
+    private var canvasModel: CanvasModel? = null
 
     fun attach(view: CanvasView) {
         canvas = view
-        canvas?.drawImage(im, vi)
+    }
+
+    fun newImage(size: IntCoord) {
+        canvasModel?.close()
+
+        val newModel = CanvasModel(size.x, size.y)
+        canvas?.let {
+            newModel.setViewSize(unscaleIntCoord(it.canvasSize).toCoord())
+        }
+        canvasModel = newModel
+        paint()
+    }
+
+    fun onResize(newIntSize: IntCoord) {
+        canvasModel?.let {
+            val newSize = newIntSize.toCoord()
+            val scaled = newSize / it.zoom
+            it.setViewSize(scaled)
+            paint()
+        }
+    }
+
+    fun clear() {
+        // TODO: this is temporary
+        canvasModel?.close()
+        canvasModel = null
+
+        canvas?.clear()
+    }
+
+    private fun paint() {
+        canvasModel?.let { model ->
+            canvas?.draw(model.image, model.view)
+        }
     }
 
     fun detach() {
         canvas = null
+        canvasModel?.close()
     }
 }
