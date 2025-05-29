@@ -1,4 +1,4 @@
-package hu.yijun.constants
+package hu.yijun.sketchbook.constants
 
 import java.awt.Color
 import javax.swing.UIManager

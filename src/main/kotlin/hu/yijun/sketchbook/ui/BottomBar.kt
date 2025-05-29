@@ -1,12 +1,12 @@
-package hu.yijun.ui
+package hu.yijun.sketchbook.ui
 
-import hu.yijun.constants.AppSizes
-import hu.yijun.presenter.ImageMetadataRepository
-import hu.yijun.theme.Theme
-import hu.yijun.theme.ThemeManager
-import hu.yijun.util.IntCoord
-import hu.yijun.util.View
-import hu.yijun.util.koinInject
+import hu.yijun.sketchbook.constants.AppSizes
+import hu.yijun.sketchbook.presenter.ImageMetadataRepository
+import hu.yijun.sketchbook.theme.Theme
+import hu.yijun.sketchbook.theme.ThemeManager
+import hu.yijun.sketchbook.util.IntCoord
+import hu.yijun.sketchbook.util.View
+import hu.yijun.sketchbook.util.koinInject
 import java.awt.Dimension
 import javax.swing.Box
 import javax.swing.BoxLayout

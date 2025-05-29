@@ -1,4 +1,4 @@
-package hu.yijun.theme
+package hu.yijun.sketchbook.theme
 
 import com.formdev.flatlaf.FlatDarkLaf
 import com.formdev.flatlaf.FlatLightLaf
@@ -16,7 +16,7 @@ object ThemeManager {
     private val lightLaf = FlatLightLaf()
     private val darkLaf = FlatDarkLaf()
 
-    private var currentTheme: Theme = Theme.DARK
+    private var currentTheme: Theme = Theme.LIGHT
     private var currentFont: Font? = null
 
     fun setTheme(theme: Theme) {

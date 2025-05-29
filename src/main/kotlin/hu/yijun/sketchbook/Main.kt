@@ -1,13 +1,13 @@
-package hu.yijun
+package hu.yijun.sketchbook
 
-import com.formdev.flatlaf.FlatDarkLaf
+import com.formdev.flatlaf.FlatLightLaf
 import com.formdev.flatlaf.extras.FlatInspector
 import com.formdev.flatlaf.extras.FlatUIDefaultsInspector
 import com.formdev.flatlaf.util.UIScale
-import hu.yijun.theme.Theme
-import hu.yijun.theme.ThemeManager
-import hu.yijun.ui.Sketchbook
-import hu.yijun.util.mainModule
+import hu.yijun.sketchbook.theme.Theme
+import hu.yijun.sketchbook.theme.ThemeManager
+import hu.yijun.sketchbook.ui.Sketchbook
+import hu.yijun.sketchbook.util.mainModule
 import org.koin.core.context.startKoin
 import javax.swing.JFrame
 import javax.swing.SwingUtilities
@@ -22,8 +22,8 @@ fun main() {
     FlatUIDefaultsInspector.install("ctrl shift alt Y")
 
     SwingUtilities.invokeLater {
-        FlatDarkLaf.setup()
-        ThemeManager.setTheme(Theme.DARK)
+        FlatLightLaf.setup()
+        ThemeManager.setTheme(Theme.LIGHT)
 
         val window = JFrame("KtSketchbook")
         window.defaultCloseOperation = EXIT_ON_CLOSE

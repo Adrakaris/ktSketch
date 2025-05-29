@@ -1,4 +1,4 @@
-package hu.yijun.util
+package hu.yijun.sketchbook.util
 
 import com.formdev.flatlaf.util.UIScale
 import java.awt.Dimension

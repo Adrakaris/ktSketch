@@ -1,4 +1,4 @@
-package hu.yijun.constants
+package hu.yijun.sketchbook.constants
 
 import javax.swing.BorderFactory
 import javax.swing.border.Border

@@ -1,9 +1,9 @@
-package hu.yijun.ui
+package hu.yijun.sketchbook.ui
 
-import hu.yijun.constants.AppSizes
-import hu.yijun.presenter.CanvasPresenter
-import hu.yijun.util.IntCoord
-import hu.yijun.util.koinInject
+import hu.yijun.sketchbook.constants.AppSizes
+import hu.yijun.sketchbook.presenter.CanvasPresenter
+import hu.yijun.sketchbook.util.IntCoord
+import hu.yijun.sketchbook.util.koinInject
 import java.awt.FlowLayout
 import javax.swing.JButton
 import javax.swing.JPanel

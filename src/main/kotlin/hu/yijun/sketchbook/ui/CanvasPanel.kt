@@ -1,11 +1,11 @@
-package hu.yijun.ui
+package hu.yijun.sketchbook.ui
 
-import hu.yijun.constants.AppColours
-import hu.yijun.presenter.CanvasPresenter
-import hu.yijun.util.IntCoord
-import hu.yijun.util.View
-import hu.yijun.util.koinInject
-import hu.yijun.util.toIntCoord
+import hu.yijun.sketchbook.constants.AppColours
+import hu.yijun.sketchbook.presenter.CanvasPresenter
+import hu.yijun.sketchbook.util.IntCoord
+import hu.yijun.sketchbook.util.View
+import hu.yijun.sketchbook.util.koinInject
+import hu.yijun.sketchbook.util.toIntCoord
 import org.koin.core.component.KoinComponent
 import java.awt.Dimension
 import java.awt.Graphics

@@ -1,10 +1,10 @@
-package hu.yijun.presenter
+package hu.yijun.sketchbook.presenter
 
-import hu.yijun.model.CanvasModel
-import hu.yijun.ui.CanvasView
-import hu.yijun.util.IntCoord
-import hu.yijun.util.View
-import hu.yijun.util.unscaleIntCoord
+import hu.yijun.sketchbook.model.CanvasModel
+import hu.yijun.sketchbook.ui.CanvasView
+import hu.yijun.sketchbook.util.IntCoord
+import hu.yijun.sketchbook.util.View
+import hu.yijun.sketchbook.util.unscaleIntCoord
 
 fun interface ImageDataListener {
     fun onData(size: IntCoord, view: View)

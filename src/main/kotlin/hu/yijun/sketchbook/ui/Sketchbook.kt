@@ -1,6 +1,6 @@
-package hu.yijun.ui
+package hu.yijun.sketchbook.ui
 
-import hu.yijun.constants.AppColours
+import hu.yijun.sketchbook.constants.AppColours
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
 import javax.swing.BorderFactory

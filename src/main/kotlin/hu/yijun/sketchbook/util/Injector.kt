@@ -1,7 +1,7 @@
-package hu.yijun.util
+package hu.yijun.sketchbook.util
 
-import hu.yijun.presenter.CanvasPresenter
-import hu.yijun.presenter.ImageMetadataRepository
+import hu.yijun.sketchbook.presenter.CanvasPresenter
+import hu.yijun.sketchbook.presenter.ImageMetadataRepository
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.koin.dsl.binds

@@ -1,9 +1,9 @@
-package hu.yijun.model
+package hu.yijun.sketchbook.model
 
 import com.formdev.flatlaf.util.UIScale
-import hu.yijun.util.Coord
-import hu.yijun.util.IntCoord
-import hu.yijun.util.View
+import hu.yijun.sketchbook.util.Coord
+import hu.yijun.sketchbook.util.IntCoord
+import hu.yijun.sketchbook.util.View
 import java.awt.Color
 import java.awt.Graphics2D
 import java.awt.image.BufferedImage

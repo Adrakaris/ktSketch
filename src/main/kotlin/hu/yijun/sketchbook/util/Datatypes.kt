@@ -1,4 +1,4 @@
-package hu.yijun.util
+package hu.yijun.sketchbook.util
 
 import java.awt.Point
 
