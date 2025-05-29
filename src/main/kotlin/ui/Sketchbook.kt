@@ -1,4 +1,4 @@
-package hu.yijun.view
+package hu.yijun.ui
 
 import hu.yijun.constants.AppColours
 import java.awt.GridBagConstraints

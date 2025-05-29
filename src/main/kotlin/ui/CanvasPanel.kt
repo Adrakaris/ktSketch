@@ -1,4 +1,4 @@
-package hu.yijun.view
+package hu.yijun.ui
 
 import hu.yijun.constants.AppColours
 import hu.yijun.presenter.CanvasPresenter
@@ -94,7 +94,7 @@ class CanvasPanel(
             val newSize = e?.component?.size ?: return
             if (newSize == prevSize) return
 
-            presenter.onResize(newSize.toIntCoord())
+            presenter.onScreenResize(newSize.toIntCoord())
             prevSize = newSize
         }
     }

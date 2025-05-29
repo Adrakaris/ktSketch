@@ -3,17 +3,28 @@ package hu.yijun.util
 import java.awt.Point
 
 data class Coord(val x: Double, val y: Double) {
-    fun toIntCoord() = IntCoord(x.toInt(), y.toInt())
+//    fun toIntCoord() = IntCoord(x.toInt(), y.toInt())
 
     operator fun div(f: Double) = Coord(x/f, y/f)
 }
 
 data class IntCoord(val x: Int, val y: Int) : Point(x, y) {
     fun toCoord() = Coord(x.toDouble(), y.toDouble())
+
+    companion object {
+        val ZERO = IntCoord(0, 0)
+    }
 }
 
 data class View(val x: Double, val y: Double, val w: Double, val h: Double) {
-    val offset get() = Coord(x, y)
-    val size get() = Coord(w, h)
+    constructor(x: Int, y: Int, w: Int, h: Int) :
+            this(x.toDouble(), y.toDouble(), w.toDouble(), h.toDouble())
+
+//    val offset get() = Coord(x, y)
+//    val size get() = Coord(w, h)
+
+    companion object {
+        val ZERO = View(0, 0, 0, 0)
+    }
 }
 

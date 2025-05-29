@@ -6,8 +6,8 @@ import com.formdev.flatlaf.extras.FlatUIDefaultsInspector
 import com.formdev.flatlaf.util.UIScale
 import hu.yijun.theme.Theme
 import hu.yijun.theme.ThemeManager
+import hu.yijun.ui.Sketchbook
 import hu.yijun.util.mainModule
-import hu.yijun.view.Sketchbook
 import org.koin.core.context.startKoin
 import javax.swing.JFrame
 import javax.swing.SwingUtilities

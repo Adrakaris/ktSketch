@@ -1,6 +1,6 @@
-package hu.yijun.view
+package hu.yijun.ui
 
-import hu.yijun.constants.AppPadding
+import hu.yijun.constants.AppSizes
 import hu.yijun.presenter.CanvasPresenter
 import hu.yijun.util.IntCoord
 import hu.yijun.util.koinInject
@@ -32,7 +32,7 @@ class TopPanel(
     }
 
     private fun initComponents() {
-        layout = FlowLayout(FlowLayout.LEFT, AppPadding.SMALL, AppPadding.SMALL)
+        layout = FlowLayout(FlowLayout.LEFT, AppSizes.SMALL, AppSizes.SMALL)
 
         add(newButton)
         add(clearButton)
