@@ -55,7 +55,7 @@ class CanvasPanel(
         repaint()
     }
 
-    override fun paintComponent(g: Graphics?) {
+    override fun paintComponent(g: Graphics) {
         super.paintComponent(g)
 
         val graphics = g as Graphics2D
@@ -95,9 +95,9 @@ class CanvasPanel(
     private inner class CanvasAdapter(initialSize: Dimension) : ComponentAdapter() {
         private var prevSize = initialSize
 
-        override fun componentResized(e: ComponentEvent?) {
+        override fun componentResized(e: ComponentEvent) {
             super.componentResized(e)
-            val newSize = e?.component?.size ?: return
+            val newSize = e.component?.size ?: return
             if (newSize == prevSize) return
 
             presenter.onScreenResize(newSize.toIntCoord())
@@ -106,14 +106,13 @@ class CanvasPanel(
     }
 
     private inner class MotionListener : MouseMotionListener {
-        override fun mouseDragged(e: MouseEvent?) {
+        override fun mouseDragged(e: MouseEvent) {
+//            println("Drag ${e.x}, ${e.y}")
         }
 
-        override fun mouseMoved(e: MouseEvent?) {
-            e?.let {
-                val imageCoords = presenter.imageCoordsOf(normaliseMouse(it.x, it.y))
-                presenter.mouseOnImage = imageCoords
-            }
+        override fun mouseMoved(e: MouseEvent) {
+            val imageCoords = presenter.imageCoordsOf(normaliseMouse(e.x, e.y))
+            presenter.mouseOnImage = imageCoords
         }
     }
 }
