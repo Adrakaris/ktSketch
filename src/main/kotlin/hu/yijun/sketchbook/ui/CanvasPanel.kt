@@ -2,18 +2,13 @@ package hu.yijun.sketchbook.ui
 
 import hu.yijun.sketchbook.constants.AppColours
 import hu.yijun.sketchbook.presenter.CanvasPresenter
-import hu.yijun.sketchbook.util.IntCoord
-import hu.yijun.sketchbook.util.View
-import hu.yijun.sketchbook.util.koinInject
-import hu.yijun.sketchbook.util.toIntCoord
+import hu.yijun.sketchbook.util.*
 import org.koin.core.component.KoinComponent
-import java.awt.Dimension
-import java.awt.Graphics
-import java.awt.Graphics2D
-import java.awt.Image
-import java.awt.Rectangle
+import java.awt.*
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
+import java.awt.event.MouseEvent
+import java.awt.event.MouseMotionListener
 import java.awt.geom.AffineTransform
 import javax.swing.JPanel
 
@@ -38,6 +33,12 @@ class CanvasPanel(
         initComponents()
 
         addComponentListener(CanvasAdapter(size))
+        addMouseWheelListener { e ->
+            val normalisedPos = normaliseMouse(e.x, e.y)
+            val velocity = -e.preciseWheelRotation
+            presenter.zoom(normalisedPos, velocity)
+        }
+        addMouseMotionListener(MotionListener())
     }
 
     override val canvasSize: IntCoord get() = size.toIntCoord()
@@ -86,6 +87,11 @@ class CanvasPanel(
     private fun initComponents() {
     }
 
+    private fun normaliseMouse(x: Int, y: Int): Coord {
+        val pos = Coord(x.toDouble(), y.toDouble())
+        return pos / canvasSize.toCoord()
+    }
+
     private inner class CanvasAdapter(initialSize: Dimension) : ComponentAdapter() {
         private var prevSize = initialSize
 
@@ -96,6 +102,18 @@ class CanvasPanel(
 
             presenter.onScreenResize(newSize.toIntCoord())
             prevSize = newSize
+        }
+    }
+
+    private inner class MotionListener : MouseMotionListener {
+        override fun mouseDragged(e: MouseEvent?) {
+        }
+
+        override fun mouseMoved(e: MouseEvent?) {
+            e?.let {
+                val imageCoords = presenter.imageCoordsOf(normaliseMouse(it.x, it.y))
+                presenter.mouseOnImage = imageCoords
+            }
         }
     }
 }

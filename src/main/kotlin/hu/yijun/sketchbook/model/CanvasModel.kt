@@ -8,6 +8,9 @@ import java.awt.Color
 import java.awt.Graphics2D
 import java.awt.image.BufferedImage
 
+const val MIN_ZOOM = 0.1
+const val MAX_ZOOM = 10.0
+
 class CanvasModel(
     width: Int, height: Int
 ) {
@@ -31,8 +34,18 @@ class CanvasModel(
     }
 
     // zero-centred, i.e. change zoom by 0.2 multiplies the internal zoom by 1.2
-    fun changeZoom(zoomby: Double) {
-        zoom = zoom * (1 + zoomby)
+    fun changeZoom(zoomby: Double, centre: Coord) {
+        val factor = 1 + zoomby
+        val newZoom = (zoom * factor).coerceIn(MIN_ZOOM, MAX_ZOOM)
+        if (newZoom == zoom) return
+        val scale = newZoom / zoom
+
+        zoom = newZoom
+        val newW = view.w / scale
+        val newH = view.h / scale
+        val newX = centre.x - (centre.x - view.x) / scale
+        val newY = centre.y - (centre.y - view.y) / scale
+        view = View(newX, newY, newW, newH)
     }
 
     fun close() {

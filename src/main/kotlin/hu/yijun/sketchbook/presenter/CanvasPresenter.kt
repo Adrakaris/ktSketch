@@ -2,12 +2,17 @@ package hu.yijun.sketchbook.presenter
 
 import hu.yijun.sketchbook.model.CanvasModel
 import hu.yijun.sketchbook.ui.CanvasView
+import hu.yijun.sketchbook.util.Coord
 import hu.yijun.sketchbook.util.IntCoord
 import hu.yijun.sketchbook.util.View
 import hu.yijun.sketchbook.util.unscaleIntCoord
 
+const val ZOOM_FACTOR = 0.05
+
 fun interface ImageDataListener {
-    fun onData(size: IntCoord, view: View)
+    fun onData(data: Data)
+
+    data class Data(val size: IntCoord, val view: View, val mouseOnImage: Coord, val zoom: Double)
 }
 
 interface ImageMetadataRepository {
@@ -21,6 +26,12 @@ class CanvasPresenter : ImageMetadataRepository {
     private var canvasModel: CanvasModel? = null
 
     private var imageDataListeners: MutableList<ImageDataListener> = mutableListOf()
+
+    var mouseOnImage: Coord = Coord.ZERO
+        set(value) {
+            field = value
+            notifyImageDataListeners()
+        }
 
     fun attach(view: CanvasView) {
         canvas = view
@@ -58,6 +69,21 @@ class CanvasPresenter : ImageMetadataRepository {
         notifyImageDataListeners()
     }
 
+    fun zoom(normalisedPos: Coord, velocity: Double) {
+        canvasModel?.let { model ->
+            val positionOnImage = getImageCoordinates(normalisedPos, model.view)
+            val zoom = velocity * ZOOM_FACTOR
+
+            model.changeZoom(zoom, positionOnImage)
+
+            notifyImageDataListeners()
+            paint()
+        }
+    }
+
+    fun imageCoordsOf(normalisedPos: Coord) =
+        canvasModel?.let { getImageCoordinates(normalisedPos, it.view) } ?: Coord.ZERO
+
     fun detach() {
         canvas = null
         canvasModel?.close()
@@ -72,12 +98,12 @@ class CanvasPresenter : ImageMetadataRepository {
     }
 
     private fun notifyImageDataListeners() {
-        canvasModel?.let { model ->
-            imageDataListeners.forEach {
-                it.onData(model.imageSize, model.view)
-            }
-        } ?: imageDataListeners.forEach {
-            it.onData(IntCoord.ZERO, View.ZERO)
+        val data: ImageDataListener.Data = canvasModel?.let { model ->
+            ImageDataListener.Data(model.imageSize, model.view, mouseOnImage, model.zoom)
+        } ?: ImageDataListener.Data(IntCoord.ZERO, View.ZERO, Coord.ZERO, 1.0)
+
+        imageDataListeners.forEach {
+            it.onData(data)
         }
     }
 
@@ -87,3 +113,8 @@ class CanvasPresenter : ImageMetadataRepository {
         }
     }
 }
+
+fun getImageCoordinates(normalisedPos: Coord, view: View): Coord = Coord(
+    x = view.x + view.w * normalisedPos.x,
+    y = view.y + view.h * normalisedPos.y
+)

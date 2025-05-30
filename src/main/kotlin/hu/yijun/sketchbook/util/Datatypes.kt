@@ -6,6 +6,12 @@ data class Coord(val x: Double, val y: Double) {
 //    fun toIntCoord() = IntCoord(x.toInt(), y.toInt())
 
     operator fun div(f: Double) = Coord(x/f, y/f)
+    operator fun div(c: Coord) = Coord(x/c.x, y/c.y)
+    operator fun div(c: IntCoord) = Coord(x/c.x.toDouble(), y/c.y.toDouble())
+
+    companion object {
+        val ZERO = Coord(0.0, 0.0)
+    }
 }
 
 data class IntCoord(val x: Int, val y: Int) : Point(x, y) {

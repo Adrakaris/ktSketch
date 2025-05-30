@@ -1,6 +1,7 @@
 package hu.yijun.sketchbook.ui
 
 import hu.yijun.sketchbook.constants.AppSizes
+import hu.yijun.sketchbook.presenter.ImageDataListener
 import hu.yijun.sketchbook.presenter.ImageMetadataRepository
 import hu.yijun.sketchbook.theme.Theme
 import hu.yijun.sketchbook.theme.ThemeManager
@@ -8,22 +9,17 @@ import hu.yijun.sketchbook.util.IntCoord
 import hu.yijun.sketchbook.util.View
 import hu.yijun.sketchbook.util.koinInject
 import java.awt.Dimension
-import javax.swing.Box
-import javax.swing.BoxLayout
-import javax.swing.JButton
-import javax.swing.JComponent
-import javax.swing.JLabel
-import javax.swing.JPanel
-import javax.swing.JSeparator
-import javax.swing.SwingConstants
+import javax.swing.*
 
 class BottomBar(
     imageMetadataRepository: ImageMetadataRepository = koinInject()
 ) : JPanel() {
     private val themeToggleButton = JButton()
     private val zoomLabel = JLabel("Zoom: 1.0")
-    private val mouseLabel = JLabel("Mouse: (0, 0)")
+    private val mouseLabel = JLabel("Mouse: (-, -)")
     private val imageLabel = JLabel("(no image!)")
+
+    private var view = View.ZERO
 
     init {
         imageMetadataRepository.addImageDataListener(::onImageDataChanged)
@@ -31,8 +27,23 @@ class BottomBar(
         initComponents()
     }
 
-    private fun onImageDataChanged(size: IntCoord, view: View) {
+    private fun onImageDataChanged(data: ImageDataListener.Data) {
+        val size = data.size
+        val view = data.view
+        val mouse = data.mouseOnImage
+
+        this.view = view
+
+        if (view == View.ZERO && size == IntCoord.ZERO) {
+            imageLabel.text = "(no image!)"
+            mouseLabel.text = "Mouse: (-, -)"
+            zoomLabel.text = "Zoom: 1.0"
+            return
+        }
+
+        zoomLabel.text = String.format("Zoom: %.1f", data.zoom)
         imageLabel.text = "Image (${size.x}x${size.y})"
+        mouseLabel.text = "Mouse (${mouse.x.toInt()}, ${mouse.y.toInt()})"
     }
 
     private fun initComponents() {
