@@ -33,6 +33,10 @@ class CanvasModel(
         view = view.copy(w = size.x, h = size.y)
     }
 
+    fun moveView(delta: Coord) {
+        view = view.copy(x = view.x + delta.x, y = view.y + delta.y)
+    }
+
     // zero-centred, i.e. change zoom by 0.2 multiplies the internal zoom by 1.2
     fun changeZoom(zoomby: Double, centre: Coord) {
         val factor = 1 + zoomby

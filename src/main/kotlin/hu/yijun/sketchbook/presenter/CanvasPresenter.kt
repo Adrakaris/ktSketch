@@ -72,10 +72,19 @@ class CanvasPresenter : ImageMetadataRepository {
     fun zoom(normalisedPos: Coord, velocity: Double) {
         canvasModel?.let { model ->
             val positionOnImage = getImageCoordinates(normalisedPos, model.view)
-            val zoom = velocity * ZOOM_FACTOR
+            val zoom = -velocity * ZOOM_FACTOR
 
             model.changeZoom(zoom, positionOnImage)
 
+            notifyImageDataListeners()
+            paint()
+        }
+    }
+
+    fun pan(normalisedDelta: Coord) {
+        canvasModel?.let { model ->
+            val imageDelta = normalisedDelta * model.view.size
+            model.moveView(-imageDelta)
             notifyImageDataListeners()
             paint()
         }

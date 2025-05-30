@@ -7,10 +7,11 @@ import org.koin.core.component.KoinComponent
 import java.awt.*
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
+import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
-import java.awt.event.MouseMotionListener
 import java.awt.geom.AffineTransform
 import javax.swing.JPanel
+import javax.swing.SwingUtilities
 
 interface CanvasView {
     val canvasSize: IntCoord
@@ -35,10 +36,12 @@ class CanvasPanel(
         addComponentListener(CanvasAdapter(size))
         addMouseWheelListener { e ->
             val normalisedPos = normaliseMouse(e.x, e.y)
-            val velocity = -e.preciseWheelRotation
+            val velocity = e.preciseWheelRotation
             presenter.zoom(normalisedPos, velocity)
         }
-        addMouseMotionListener(MotionListener())
+        val mouseAdapter = CanvasMouseAdapter()
+        addMouseListener(mouseAdapter)
+        addMouseMotionListener(mouseAdapter)
     }
 
     override val canvasSize: IntCoord get() = size.toIntCoord()
@@ -105,14 +108,41 @@ class CanvasPanel(
         }
     }
 
-    private inner class MotionListener : MouseMotionListener {
+    private inner class CanvasMouseAdapter : MouseAdapter() {
+        private var lastPos: Point? = null
+
+        override fun mousePressed(e: MouseEvent) {
+            if (shouldPan(e)) {
+                lastPos = e.point
+            }
+        }
+
+        override fun mouseReleased(e: MouseEvent) {
+            lastPos = null
+        }
+
         override fun mouseDragged(e: MouseEvent) {
-//            println("Drag ${e.x}, ${e.y}")
+            lastPos?.let {
+                if (shouldPan(e)) {
+                    val screenDelta = e.point.toIntCoord() - it.toIntCoord()
+                    val normalisedDelta = screenDelta.toCoord() / canvasSize
+                    presenter.pan(normalisedDelta)
+                    lastPos = e.point
+                }
+            }
         }
 
         override fun mouseMoved(e: MouseEvent) {
             val imageCoords = presenter.imageCoordsOf(normaliseMouse(e.x, e.y))
             presenter.mouseOnImage = imageCoords
+        }
+
+        private fun shouldPan(e: MouseEvent): Boolean {
+            val isMiddle =
+                SwingUtilities.isMiddleMouseButton(e)
+            val isCtrlOrMeta = e.isControlDown || e.isMetaDown
+            val isLeft = SwingUtilities.isLeftMouseButton(e)
+            return isMiddle || (isCtrlOrMeta && isLeft)
         }
     }
 }
