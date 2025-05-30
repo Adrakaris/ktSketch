@@ -9,6 +9,7 @@ build/
 .idea/jarRepositories.xml
 .idea/compiler.xml
 .idea/uiDesigner.xml
+.idea/checkstyle-idea.xml
 .idea/libraries/
 *.iws
 *.iml
@@ -16,6 +17,7 @@ build/
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
+.name
 
 ### Kotlin ###
 .kotlin

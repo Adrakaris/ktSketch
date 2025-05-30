@@ -19,6 +19,10 @@ object ThemeManager {
     private var currentTheme: Theme = Theme.LIGHT
     private var currentFont: Font? = null
 
+    init {
+        UIManager.put("Button.arc", 0)
+    }
+
     fun setTheme(theme: Theme) {
         if (theme == currentTheme) return
 
