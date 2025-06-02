@@ -12,9 +12,9 @@ const val MIN_ZOOM = 0.1
 const val MAX_ZOOM = 10.0
 
 class ImageModel(
-    width: Int, height: Int
+    width: Int, height: Int,
+    val image: BufferedImage
 ) {
-    val image: BufferedImage = BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
     val imageSize: IntCoord get() = IntCoord(image.width, image.height)
 
     var view: View = View(0.0, 0.0, UIScale.scale(width).toDouble(), UIScale.scale(height).toDouble())
@@ -24,7 +24,10 @@ class ImageModel(
 
     private val graphics: Graphics2D = image.graphics as Graphics2D
 
-    init {
+    constructor(width: Int, height: Int) : this(
+        width, height,
+        BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
+    ) {
         graphics.color = Color.WHITE
         graphics.fillRect(0, 0, image.width, image.height)
     }

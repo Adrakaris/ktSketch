@@ -6,8 +6,12 @@ import hu.yijun.sketchbook.util.Coord
 import hu.yijun.sketchbook.util.IntCoord
 import hu.yijun.sketchbook.util.View
 import hu.yijun.sketchbook.util.unscaleIntCoord
+import java.io.File
+import javax.imageio.ImageIO
 
 const val ZOOM_FACTOR = 0.05
+
+val VALID_IMAGE_FORMATS = ImageIO.getReaderFormatNames().map { it.lowercase() }.toSet()
 
 fun interface ImageDataListener {
     fun onData(data: Data)
@@ -45,6 +49,32 @@ class CanvasPresenter : ImageMetadataRepository {
             newModel.setViewSize(unscaleIntCoord(it.canvasSize).toCoord())
         }
         imageModel = newModel
+
+        notifyImageDataListeners()
+        paint()
+    }
+
+    fun loadImage(file: File) {
+        if (!file.exists() || !file.isFile) {
+            println("Error loading image: File does not exist: $file")
+            return
+        }
+
+        if (file.extension.lowercase() !in VALID_IMAGE_FORMATS) {
+            println("Error loading image: unsupported format: .${file.extension}")
+            return
+        }
+
+        val image = ImageIO.read(file)
+        if (image == null) {
+            println("Error loading image: could not read file: $file")
+            return
+        }
+
+        imageModel = ImageModel(image.width, image.height, image)
+        canvas?.let {
+            imageModel?.setViewSize(unscaleIntCoord(it.canvasSize).toCoord())
+        }
 
         notifyImageDataListeners()
         paint()
