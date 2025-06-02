@@ -1,7 +1,7 @@
 package hu.yijun.sketchbook.ui
 
 import hu.yijun.sketchbook.constants.AppSizes
-import hu.yijun.sketchbook.presenter.ImagePresenter
+import hu.yijun.sketchbook.presenter.CanvasPresenter
 import hu.yijun.sketchbook.util.IntCoord
 import hu.yijun.sketchbook.util.koinInject
 import java.awt.FlowLayout
@@ -10,7 +10,7 @@ import javax.swing.JPanel
 import javax.swing.SwingUtilities
 
 class TopPanel(
-    imagePresenter: ImagePresenter = koinInject()
+    canvasPresenter: CanvasPresenter = koinInject()
 ) : JPanel() {
 
     private val newButton = JButton("New Image")
@@ -20,10 +20,10 @@ class TopPanel(
         initComponents()
 
         newButton.addActionListener {
-            imagePresenter.newImage(IntCoord(1280, 720))
+            canvasPresenter.newImage(IntCoord(1280, 720))
         }
         clearButton.addActionListener {
-            imagePresenter.clear()
+            canvasPresenter.clear()
         }
 
         SwingUtilities.invokeLater {

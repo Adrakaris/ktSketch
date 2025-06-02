@@ -1,7 +1,7 @@
 package hu.yijun.sketchbook.ui
 
 import hu.yijun.sketchbook.constants.AppColours
-import hu.yijun.sketchbook.presenter.ImagePresenter
+import hu.yijun.sketchbook.presenter.CanvasPresenter
 import hu.yijun.sketchbook.util.*
 import org.koin.core.component.KoinComponent
 import java.awt.*
@@ -21,7 +21,7 @@ interface CanvasView {
 }
 
 class PaintCanvasPanel(
-    private val presenter: ImagePresenter = koinInject()
+    private val presenter: CanvasPresenter = koinInject()
 ) : JPanel(), CanvasView, KoinComponent {
 
     private var image: Image? = null

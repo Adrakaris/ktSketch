@@ -20,7 +20,7 @@ interface ImageMetadataRepository {
     fun removeImageDataListener(listener: ImageDataListener)
 }
 
-class ImagePresenter : ImageMetadataRepository {
+class CanvasPresenter : ImageMetadataRepository {
 
     private var canvas: CanvasView? = null
     private var imageModel: ImageModel? = null
