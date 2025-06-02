@@ -9,7 +9,7 @@ import javax.swing.SwingUtilities
 
 class Sketchbook : JPanel() {
     private val topPanel = TopPanel()
-    private val canvas = CanvasPanel()
+    private val canvas = PaintCanvasPanel()
     private val bottomBar = BottomBar()
 
     init {

@@ -11,7 +11,7 @@ import java.awt.image.BufferedImage
 const val MIN_ZOOM = 0.1
 const val MAX_ZOOM = 10.0
 
-class CanvasModel(
+class ImageModel(
     width: Int, height: Int
 ) {
     val image: BufferedImage = BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
