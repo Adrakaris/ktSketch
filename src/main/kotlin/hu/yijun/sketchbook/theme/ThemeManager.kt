@@ -2,7 +2,6 @@ package hu.yijun.sketchbook.theme
 
 import com.formdev.flatlaf.FlatDarkLaf
 import com.formdev.flatlaf.FlatLightLaf
-import com.formdev.flatlaf.extras.FlatAnimatedLafChange
 import java.awt.Font
 import javax.swing.JWindow
 import javax.swing.SwingUtilities
@@ -28,7 +27,7 @@ object ThemeManager {
 
         currentTheme = theme
 
-        FlatAnimatedLafChange.showSnapshot()
+//        FlatAnimatedLafChange.showSnapshot()
         UIManager.setLookAndFeel(
             when (theme) {
                 Theme.LIGHT -> lightLaf
@@ -37,7 +36,7 @@ object ThemeManager {
         )
 
         updateFrameUI()
-        FlatAnimatedLafChange.hideSnapshotWithAnimation()
+//        FlatAnimatedLafChange.hideSnapshotWithAnimation()
     }
 
     fun theme() = currentTheme

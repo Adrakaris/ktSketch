@@ -120,6 +120,14 @@ class CanvasPresenter : ImageMetadataRepository {
         }
     }
 
+    fun resetZoomAndPan() {
+        imageModel?.let {
+            it.resetZoomAndPosition()
+            notifyImageDataListeners()
+            paint()
+        }
+    }
+
     fun imageCoordsOf(normalisedPos: Coord) =
         imageModel?.let { getImageCoordinates(normalisedPos, it.view) } ?: Coord.ZERO
 

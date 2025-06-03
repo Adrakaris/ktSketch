@@ -5,6 +5,7 @@ import hu.yijun.sketchbook.presenter.ImageDataListener
 import hu.yijun.sketchbook.presenter.ImageMetadataRepository
 import hu.yijun.sketchbook.theme.Theme
 import hu.yijun.sketchbook.theme.ThemeManager
+import hu.yijun.sketchbook.ui.components.BorderlessButton
 import hu.yijun.sketchbook.util.IntCoord
 import hu.yijun.sketchbook.util.View
 import hu.yijun.sketchbook.util.koinInject
@@ -14,7 +15,7 @@ import javax.swing.*
 class BottomBar(
     imageMetadataRepository: ImageMetadataRepository = koinInject()
 ) : JPanel() {
-    private val themeToggleButton = JButton()
+    private val themeToggleButton = BorderlessButton()
     private val zoomLabel = JLabel("Zoom: 1.0")
     private val mouseLabel = JLabel("Mouse: (-, -)")
     private val imageLabel = JLabel("(no image!)")
@@ -53,7 +54,6 @@ class BottomBar(
             text = "Toggle Theme"
             font = smallFont
             addActionListener { ThemeManager.toggle() }
-            border = AppSizes.XSMALL_EMPTY_BORDER
         }
         zoomLabel.font = smallFont
         mouseLabel.font = smallFont
@@ -67,6 +67,7 @@ class BottomBar(
         val rightInfoPanel = JPanel().apply {
             layout = BoxLayout(this, BoxLayout.X_AXIS)
 
+            addSpacer(this)
             add(zoomLabel)
             addSpacer(this)
             add(mouseLabel)
@@ -76,18 +77,6 @@ class BottomBar(
         }
         add(rightInfoPanel)
     }
-
-    private fun addSpacer(panel: JPanel) {
-        panel.add(Box.createHorizontalStrut(AppSizes.XSMALL))
-        panel.add(divider())
-        panel.add(Box.createHorizontalStrut(AppSizes.XSMALL))
-    }
-
-    private fun divider(): JComponent {
-        return JSeparator(SwingConstants.VERTICAL).apply {
-            maximumSize = Dimension(3, 16)
-        }
-    }
 }
 
 private fun ThemeManager.toggle() {
@@ -95,5 +84,17 @@ private fun ThemeManager.toggle() {
         setTheme(Theme.DARK)
     } else {
         setTheme(Theme.LIGHT)
+    }
+}
+
+private fun addSpacer(panel: JPanel) {
+    panel.add(Box.createHorizontalStrut(AppSizes.XSMALL))
+    panel.add(divider())
+    panel.add(Box.createHorizontalStrut(AppSizes.XSMALL))
+}
+
+private fun divider(): JComponent {
+    return JSeparator(SwingConstants.VERTICAL).apply {
+        maximumSize = Dimension(3, 16)
     }
 }

@@ -32,7 +32,7 @@ data class View(val x: Double, val y: Double, val w: Double, val h: Double) {
     constructor(x: Int, y: Int, w: Int, h: Int) :
             this(x.toDouble(), y.toDouble(), w.toDouble(), h.toDouble())
 
-//    val offset get() = Coord(x, y)
+    val offset get() = Coord(x, y)
     val size get() = Coord(w, h)
 
     companion object {

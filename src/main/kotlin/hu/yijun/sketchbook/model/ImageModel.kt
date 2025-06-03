@@ -55,6 +55,11 @@ class ImageModel(
         view = View(newX, newY, newW, newH)
     }
 
+    fun resetZoomAndPosition() {
+        view = view.copy(x = 0.0, y = 0.0)
+        changeZoom(1/zoom, Coord.ZERO)
+    }
+
     fun close() {
         graphics.dispose()
     }

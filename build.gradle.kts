@@ -19,6 +19,7 @@ val junitVersion = "5.10.2"
 dependencies {
     implementation("com.formdev:flatlaf:$flatlafVersion")
     implementation("com.formdev:flatlaf-extras:$flatlafVersion")
+    implementation("com.formdev:flatlaf-fonts-inter:4.1")
     implementation("io.insert-koin:koin-core:$koinVersion")
 
     testImplementation("org.assertj:assertj-core:$assertjVersion")

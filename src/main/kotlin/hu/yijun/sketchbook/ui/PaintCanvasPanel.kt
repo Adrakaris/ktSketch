@@ -1,5 +1,6 @@
 package hu.yijun.sketchbook.ui
 
+import com.formdev.flatlaf.FlatClientProperties
 import hu.yijun.sketchbook.constants.AppColours
 import hu.yijun.sketchbook.presenter.CanvasPresenter
 import hu.yijun.sketchbook.util.*
@@ -30,7 +31,7 @@ class PaintCanvasPanel(
     init {
         presenter.attach(this)
 
-        setColours()
+        putClientProperty(FlatClientProperties.STYLE, "background: \$${AppColours.SHADED_BG_STYLE}")
         initComponents()
 
         addComponentListener(CanvasAdapter(size))
@@ -69,11 +70,6 @@ class PaintCanvasPanel(
         }
     }
 
-    override fun updateUI() {
-        super.updateUI()
-        setColours()
-    }
-
     private fun transformViewToFit(clipBounds: Rectangle, view: View): AffineTransform {
         val scaleX = clipBounds.width / view.w
         val scaleY = clipBounds.height / view.h
@@ -81,10 +77,6 @@ class PaintCanvasPanel(
         transform.translate(-view.x * scaleX, -view.y * scaleY)
         transform.scale(scaleX, scaleY)
         return transform
-    }
-
-    private fun setColours() {
-        background = AppColours.SHADED
     }
 
     private fun initComponents() {

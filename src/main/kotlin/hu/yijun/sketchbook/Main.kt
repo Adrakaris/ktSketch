@@ -1,8 +1,10 @@
 package hu.yijun.sketchbook
 
+import com.formdev.flatlaf.FlatLaf
 import com.formdev.flatlaf.FlatLightLaf
 import com.formdev.flatlaf.extras.FlatInspector
 import com.formdev.flatlaf.extras.FlatUIDefaultsInspector
+import com.formdev.flatlaf.fonts.inter.FlatInterFont
 import com.formdev.flatlaf.util.UIScale
 import hu.yijun.sketchbook.theme.Theme
 import hu.yijun.sketchbook.theme.ThemeManager
@@ -22,7 +24,12 @@ fun main() {
     FlatUIDefaultsInspector.install("ctrl shift alt Y")
 
     SwingUtilities.invokeLater {
+        FlatInterFont.installLazy()
+        FlatLaf.setPreferredFontFamily(FlatInterFont.FAMILY)
+        FlatLaf.setPreferredLightFontFamily(FlatInterFont.FAMILY_LIGHT)
+        FlatLaf.setPreferredSemiboldFontFamily(FlatInterFont.FAMILY_SEMIBOLD)
         FlatLightLaf.setup()
+
         ThemeManager.setTheme(Theme.LIGHT)
 
         val window = JFrame("KtSketchbook")
