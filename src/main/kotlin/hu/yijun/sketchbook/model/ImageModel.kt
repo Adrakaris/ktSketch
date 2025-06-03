@@ -9,7 +9,7 @@ import java.awt.Graphics2D
 import java.awt.image.BufferedImage
 
 const val MIN_ZOOM = 0.1
-const val MAX_ZOOM = 10.0
+const val MAX_ZOOM = 20.0
 
 class ImageModel(
     width: Int, height: Int,

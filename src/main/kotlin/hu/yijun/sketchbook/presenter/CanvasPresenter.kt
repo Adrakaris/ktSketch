@@ -71,6 +71,7 @@ class CanvasPresenter : ImageMetadataRepository {
             return
         }
 
+        imageModel?.close()
         imageModel = ImageModel(image.width, image.height, image, file.name)
         canvas?.let {
             imageModel?.setViewSize(unscaleIntCoord(it.canvasSize).toCoord())
