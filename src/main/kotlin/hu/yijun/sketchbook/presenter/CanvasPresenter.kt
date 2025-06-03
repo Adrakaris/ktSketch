@@ -16,7 +16,7 @@ val VALID_IMAGE_FORMATS = ImageIO.getReaderFormatNames().map { it.lowercase() }.
 fun interface ImageDataListener {
     fun onData(data: Data)
 
-    data class Data(val size: IntCoord, val view: View, val mouseOnImage: Coord, val zoom: Double)
+    data class Data(val size: IntCoord, val view: View, val mouseOnImage: Coord, val zoom: Double, val name: String)
 }
 
 interface ImageMetadataRepository {
@@ -71,7 +71,7 @@ class CanvasPresenter : ImageMetadataRepository {
             return
         }
 
-        imageModel = ImageModel(image.width, image.height, image)
+        imageModel = ImageModel(image.width, image.height, image, file.name)
         canvas?.let {
             imageModel?.setViewSize(unscaleIntCoord(it.canvasSize).toCoord())
         }
@@ -131,10 +131,10 @@ class CanvasPresenter : ImageMetadataRepository {
     fun imageCoordsOf(normalisedPos: Coord) =
         imageModel?.let { getImageCoordinates(normalisedPos, it.view) } ?: Coord.ZERO
 
-    fun detach() {
-        canvas = null
-        imageModel?.close()
-    }
+//    fun detach() {
+//        canvas = null
+//        imageModel?.close()
+//    }
 
     override fun addImageDataListener(listener: ImageDataListener) {
         imageDataListeners.add(listener)
@@ -146,8 +146,8 @@ class CanvasPresenter : ImageMetadataRepository {
 
     private fun notifyImageDataListeners() {
         val data: ImageDataListener.Data = imageModel?.let { model ->
-            ImageDataListener.Data(model.imageSize, model.view, mouseOnImage, model.zoom)
-        } ?: ImageDataListener.Data(IntCoord.ZERO, View.ZERO, Coord.ZERO, 1.0)
+            ImageDataListener.Data(model.imageSize, model.view, mouseOnImage, model.zoom, model.name)
+        } ?: ImageDataListener.Data(IntCoord.ZERO, View.ZERO, Coord.ZERO, 1.0, "None")
 
         imageDataListeners.forEach {
             it.onData(data)

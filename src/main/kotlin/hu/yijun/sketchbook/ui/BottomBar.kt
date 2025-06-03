@@ -43,7 +43,7 @@ class BottomBar(
         }
 
         zoomLabel.text = String.format("Zoom: %.1f", data.zoom)
-        imageLabel.text = "Image (${size.x}x${size.y})"
+        imageLabel.text = "${data.name} (${size.x}x${size.y})"
         mouseLabel.text = "Mouse (${mouse.x.toInt()}, ${mouse.y.toInt()})"
     }
 

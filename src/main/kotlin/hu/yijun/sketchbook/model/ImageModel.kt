@@ -13,7 +13,8 @@ const val MAX_ZOOM = 10.0
 
 class ImageModel(
     width: Int, height: Int,
-    val image: BufferedImage
+    val image: BufferedImage,
+    name: String,
 ) {
     val imageSize: IntCoord get() = IntCoord(image.width, image.height)
 
@@ -21,12 +22,15 @@ class ImageModel(
         private set
     var zoom: Double = 1.0
         private set
+    var name: String = name
+        private set
 
     private val graphics: Graphics2D = image.graphics as Graphics2D
 
     constructor(width: Int, height: Int) : this(
         width, height,
-        BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
+        BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB),
+        "New Image",
     ) {
         graphics.color = Color.WHITE
         graphics.fillRect(0, 0, image.width, image.height)
@@ -57,7 +61,7 @@ class ImageModel(
 
     fun resetZoomAndPosition() {
         view = view.copy(x = 0.0, y = 0.0)
-        changeZoom(1/zoom, Coord.ZERO)
+        changeZoom(1/zoom - 1, Coord.ZERO)
     }
 
     fun close() {
