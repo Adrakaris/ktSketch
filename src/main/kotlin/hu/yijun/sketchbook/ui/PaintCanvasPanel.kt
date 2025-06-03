@@ -63,6 +63,10 @@ class PaintCanvasPanel(
         super.paintComponent(g)
 
         val graphics = g as Graphics2D
+        // supposedly, there's no way to have nearest neighbour with fractional translation. So
+        // the image is always axis aligned despite everything I try.
+        // Unless I want to use something like lwjgl3-awt this will be the case.
+        // maybe that's something to think about in the future? (pain)
 
         if (image != null && imageView != null) {
             val transform = transformViewToFit(graphics.clipBounds, imageView!!)
