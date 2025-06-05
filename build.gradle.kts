@@ -10,17 +10,20 @@ repositories {
     mavenCentral()
 }
 
-val kotlinVersion = "2.0.20"
 val flatlafVersion = "3.6"
 val assertjVersion = "3.27.3"
 val koinVersion = "3.5.0"
 val junitVersion = "5.10.2"
+val kotlinxVersion = "1.10.2"
 
 dependencies {
     implementation("com.formdev:flatlaf:$flatlafVersion")
     implementation("com.formdev:flatlaf-extras:$flatlafVersion")
     implementation("com.formdev:flatlaf-fonts-inter:4.1")
     implementation("io.insert-koin:koin-core:$koinVersion")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxVersion")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:$kotlinxVersion")
+//    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:$kotlinxVersion")
 
     testImplementation("org.assertj:assertj-core:$assertjVersion")
     testImplementation("io.insert-koin:koin-test:$koinVersion")

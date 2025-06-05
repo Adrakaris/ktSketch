@@ -11,41 +11,60 @@ import java.awt.image.BufferedImage
 const val MIN_ZOOM = 0.1
 const val MAX_ZOOM = 20.0
 
-class ImageModel(
-    width: Int, height: Int,
-    val image: BufferedImage,
+interface ImageModel {
+    val image: BufferedImage
+    val imageSize: IntCoord
+    val view: View
+    val zoom: Double
+    val name: String
+
+    fun setViewSize(size: Coord)
+    fun moveView(delta: Coord)
+    /** zero-centred, i.e. change zoom by 0.2 multiplies the internal zoom by 1.2 */
+    fun changeZoom(zoomby: Double, centre: Coord)
+    fun resetZoomAndPosition()
+    fun close()
+
+    companion object {
+        fun with(width: Int, height: Int, image: BufferedImage, name: String): ImageModel =
+            ImageModelImpl(width, height, image, name)
+
+        fun with(width: Int, height: Int): ImageModel = ImageModelImpl(width, height)
+    }
+}
+
+class ImageModelImpl(
+    width: Int,
+    height: Int,
+    override val image: BufferedImage,
     name: String,
-) {
-    val imageSize: IntCoord get() = IntCoord(image.width, image.height)
+) : ImageModel {
+    override val imageSize: IntCoord get() = IntCoord(image.width, image.height)
 
-    var view: View = View(0.0, 0.0, UIScale.scale(width).toDouble(), UIScale.scale(height).toDouble())
-        private set
-    var zoom: Double = 1.0
-        private set
-    var name: String = name
-        private set
-
-    private val graphics: Graphics2D = image.graphics as Graphics2D
+    override var view: View = View(0.0, 0.0, UIScale.scale(width).toDouble(), UIScale.scale(height).toDouble())
+    override var zoom: Double = 1.0
+    override var name: String = name
 
     constructor(width: Int, height: Int) : this(
         width, height,
         BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB),
         "New Image",
     ) {
+        val graphics = image.graphics as Graphics2D
         graphics.color = Color.WHITE
         graphics.fillRect(0, 0, image.width, image.height)
+        graphics.dispose()
     }
 
-    fun setViewSize(size: Coord) {
+    override fun setViewSize(size: Coord) {
         view = view.copy(w = size.x, h = size.y)
     }
 
-    fun moveView(delta: Coord) {
+    override fun moveView(delta: Coord) {
         view = view.copy(x = view.x + delta.x, y = view.y + delta.y)
     }
 
-    // zero-centred, i.e. change zoom by 0.2 multiplies the internal zoom by 1.2
-    fun changeZoom(zoomby: Double, centre: Coord) {
+    override fun changeZoom(zoomby: Double, centre: Coord) {
         val factor = 1 + zoomby
         val newZoom = (zoom * factor).coerceIn(MIN_ZOOM, MAX_ZOOM)
         if (newZoom == zoom) return
@@ -59,12 +78,11 @@ class ImageModel(
         view = View(newX, newY, newW, newH)
     }
 
-    fun resetZoomAndPosition() {
+    override fun resetZoomAndPosition() {
         view = view.copy(x = 0.0, y = 0.0)
         changeZoom(1/zoom - 1, Coord.ZERO)
     }
 
-    fun close() {
-        graphics.dispose()
+    override fun close() {
     }
 }

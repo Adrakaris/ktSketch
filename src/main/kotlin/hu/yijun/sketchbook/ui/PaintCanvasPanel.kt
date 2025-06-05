@@ -63,12 +63,14 @@ class PaintCanvasPanel(
         super.paintComponent(g)
 
         val graphics = g as Graphics2D
-        // supposedly, there's no way to have nearest neighbour with fractional translation. So
-        // the image is always axis aligned despite everything I try.
-        // Unless I want to use something like lwjgl3-awt this will be the case.
-        // maybe that's something to think about in the future? (pain)
+        // In terms of nearest neighbour with fractional translation, MAC does not do it, properly, so its always
+        // axis aligned. WINDOWS, however, does.
+        // This is a mac L. Though if I really want this, maybe try something like lwjgl3-awt
+
+        graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
 
         if (image != null && imageView != null) {
+
             val transform = transformViewToFit(graphics.clipBounds, imageView!!)
             graphics.drawImage(image, transform, null)
         }
@@ -111,6 +113,12 @@ class PaintCanvasPanel(
             if (shouldPan(e)) {
                 lastPos = e.point
             }
+
+            if (!shouldPan(e)) {
+                val imageCoord = imageCoordsOfScreen(e.point.toIntCoord())
+                presenter.draw(imageCoord, imageCoord)
+                lastPos = e.point
+            }
         }
 
         override fun mouseReleased(e: MouseEvent) {
@@ -125,6 +133,11 @@ class PaintCanvasPanel(
                     presenter.pan(normalisedDelta)
                     lastPos = e.point
                 }
+
+                if (!shouldPan(e)) {
+                    presenter.draw(imageCoordsOfScreen(e.point.toIntCoord()), imageCoordsOfScreen(it.toIntCoord()))
+                    lastPos = e.point
+                }
             }
         }
 
@@ -132,6 +145,9 @@ class PaintCanvasPanel(
             val imageCoords = presenter.imageCoordsOf(normaliseMouse(e.x, e.y))
             presenter.mouseOnImage = imageCoords
         }
+
+        private fun imageCoordsOfScreen(point: Point): IntCoord =
+            presenter.imageCoordsOf(normaliseMouse(point.x, point.y)).toIntCoord()
 
         private fun shouldPan(e: MouseEvent): Boolean {
             val isMiddle =

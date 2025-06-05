@@ -3,7 +3,7 @@ package hu.yijun.sketchbook.util
 import java.awt.Point
 
 data class Coord(val x: Double, val y: Double) {
-//    fun toIntCoord() = IntCoord(x.toInt(), y.toInt())
+    fun toIntCoord() = IntCoord(x.toInt(), y.toInt())
 
     operator fun div(f: Double) = Coord(x/f, y/f)
     operator fun div(c: Coord) = Coord(x/c.x, y/c.y)

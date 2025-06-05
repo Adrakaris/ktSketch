@@ -15,7 +15,7 @@ import javax.swing.*
 class BottomBar(
     imageMetadataRepository: ImageMetadataRepository = koinInject()
 ) : JPanel() {
-    private val themeToggleButton = BorderlessButton()
+    private val themeToggleButton = BorderlessButton("Toggle theme")
     private val zoomLabel = JLabel("Zoom: 1.0")
     private val mouseLabel = JLabel("Mouse: (-, -)")
     private val imageLabel = JLabel("(no image!)")
@@ -51,7 +51,6 @@ class BottomBar(
         val smallFont = font.deriveFont(AppSizes.SMALL_FONT_SIZE)
 
         themeToggleButton.apply {
-            text = "Toggle Theme"
             font = smallFont
             addActionListener { ThemeManager.toggle() }
         }

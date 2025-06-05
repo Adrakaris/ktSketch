@@ -1,11 +1,18 @@
 package hu.yijun.sketchbook.presenter
 
+import hu.yijun.sketchbook.model.DrawInterpolatedLine
+import hu.yijun.sketchbook.model.ImageDrawer
 import hu.yijun.sketchbook.model.ImageModel
 import hu.yijun.sketchbook.ui.CanvasView
 import hu.yijun.sketchbook.util.Coord
 import hu.yijun.sketchbook.util.IntCoord
 import hu.yijun.sketchbook.util.View
 import hu.yijun.sketchbook.util.unscaleIntCoord
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import java.awt.Color
 import java.io.File
 import javax.imageio.ImageIO
 
@@ -24,7 +31,9 @@ interface ImageMetadataRepository {
     fun removeImageDataListener(listener: ImageDataListener)
 }
 
-class CanvasPresenter : ImageMetadataRepository {
+class CanvasPresenter(
+    private val drawProcessor: ImageDrawer
+) : ImageMetadataRepository {
 
     private var canvas: CanvasView? = null
     private var imageModel: ImageModel? = null
@@ -42,13 +51,17 @@ class CanvasPresenter : ImageMetadataRepository {
     }
 
     fun newImage(size: IntCoord) {
-        imageModel?.close()
+        imageModel?.let {
+            it.close()
+            drawProcessor.uninstall()
+        }
 
-        val newModel = ImageModel(size.x, size.y)
+        val newModel = ImageModel.with(size.x, size.y)
         canvas?.let {
             newModel.setViewSize(unscaleIntCoord(it.canvasSize).toCoord())
         }
         imageModel = newModel
+        drawProcessor.install(newModel)
 
         notifyImageDataListeners()
         paint()
@@ -71,14 +84,28 @@ class CanvasPresenter : ImageMetadataRepository {
             return
         }
 
-        imageModel?.close()
-        imageModel = ImageModel(image.width, image.height, image, file.name)
+        imageModel?.let {
+            it.close()
+            drawProcessor.uninstall()
+        }
+        imageModel = ImageModel.with(image.width, image.height, image, file.name).also {
+            drawProcessor.install(it)
+        }
         canvas?.let {
             imageModel?.setViewSize(unscaleIntCoord(it.canvasSize).toCoord())
         }
 
         notifyImageDataListeners()
         paint()
+    }
+
+    fun closeImage() {
+        // TODO: this is temporary
+        imageModel?.close()
+        imageModel = null
+
+        canvas?.clear()
+        notifyImageDataListeners()
     }
 
     fun onScreenResize(newIntSize: IntCoord) {
@@ -89,15 +116,6 @@ class CanvasPresenter : ImageMetadataRepository {
 
             paint()
         }
-    }
-
-    fun clear() {
-        // TODO: this is temporary
-        imageModel?.close()
-        imageModel = null
-
-        canvas?.clear()
-        notifyImageDataListeners()
     }
 
     fun zoom(normalisedPos: Coord, velocity: Double) {
@@ -131,6 +149,27 @@ class CanvasPresenter : ImageMetadataRepository {
 
     fun imageCoordsOf(normalisedPos: Coord) =
         imageModel?.let { getImageCoordinates(normalisedPos, it.view) } ?: Coord.ZERO
+
+    private var shouldUpdateImageAfterDraw = false
+
+    /** Positions in image coordinates */
+    @OptIn(DelicateCoroutinesApi::class)
+    fun draw(position: IntCoord, prevPosition: IntCoord, color: Color = Color.BLACK, radius: Int = 50) {
+        if (imageModel == null) return
+
+        val command = DrawInterpolatedLine(position, prevPosition, color, radius)
+        drawProcessor.draw(command)
+
+        if (!shouldUpdateImageAfterDraw) {
+            shouldUpdateImageAfterDraw = true
+            GlobalScope.launch {
+                delay(16)
+                println("update draw")
+                paint()
+                shouldUpdateImageAfterDraw = false
+            }
+        }
+    }
 
 //    fun detach() {
 //        canvas = null

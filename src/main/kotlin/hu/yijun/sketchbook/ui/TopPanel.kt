@@ -32,7 +32,7 @@ class TopPanel(
             canvasPresenter.newImage(IntCoord(1280, 720))
         }
         clearButton.addActionListener {
-            canvasPresenter.clear()
+            canvasPresenter.closeImage()
         }
         loadButton.addActionListener(::loadImageAction)
         resetViewButton.addActionListener {
