@@ -164,7 +164,6 @@ class CanvasPresenter(
             shouldUpdateImageAfterDraw = true
             GlobalScope.launch {
                 delay(16)
-                println("update draw")
                 paint()
                 shouldUpdateImageAfterDraw = false
             }
