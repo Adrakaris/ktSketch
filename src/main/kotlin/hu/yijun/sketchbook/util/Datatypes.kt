@@ -1,7 +1,5 @@
 package hu.yijun.sketchbook.util
 
-import java.awt.Point
-
 data class Coord(val x: Double, val y: Double) {
     fun toIntCoord() = IntCoord(x.toInt(), y.toInt())
 
@@ -18,10 +16,12 @@ data class Coord(val x: Double, val y: Double) {
     }
 }
 
-data class IntCoord(val x: Int, val y: Int) : Point(x, y) {
+data class IntCoord(val x: Int, val y: Int) {
     fun toCoord() = Coord(x.toDouble(), y.toDouble())
 
     operator fun minus(c: IntCoord) = IntCoord(x - c.x, y - c.y)
+    operator fun minus(i: Int) = IntCoord(x - i, y - i)
+    operator fun plus(i: Int) = IntCoord(x + i, y + i)
 
     companion object {
         val ZERO = IntCoord(0, 0)

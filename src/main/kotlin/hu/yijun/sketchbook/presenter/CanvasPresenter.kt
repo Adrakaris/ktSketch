@@ -150,11 +150,29 @@ class CanvasPresenter(
     fun imageCoordsOf(normalisedPos: Coord) =
         imageModel?.let { getImageCoordinates(normalisedPos, it.view) } ?: Coord.ZERO
 
+    fun startDrawAction() {
+        imageModel?.startEdit()
+    }
+
+    fun stopDrawAction() {
+        imageModel?.finishEdit()
+    }
+
+    fun undo() {
+        imageModel?.undo()
+        paint()
+    }
+
+    fun redo() {
+        imageModel?.redo()
+        paint()
+    }
+
     private var shouldUpdateImageAfterDraw = false
 
     /** Positions in image coordinates */
     @OptIn(DelicateCoroutinesApi::class)
-    fun draw(position: IntCoord, prevPosition: IntCoord, color: Color = Color.BLACK, radius: Int = 50) {
+    fun draw(position: IntCoord, prevPosition: IntCoord, color: Color = Color.BLACK, radius: Int = 10) {
         if (imageModel == null) return
 
         val command = DrawInterpolatedLine(position, prevPosition, color, radius)

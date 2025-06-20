@@ -57,6 +57,10 @@ class BottomBar(
         zoomLabel.font = smallFont
         mouseLabel.font = smallFont
         imageLabel.font = smallFont
+        val tempLabel = JLabel().apply {
+            text = "⌘Z Undo ⌘⇧Z Redo"
+            font = smallFont
+        }
 
         layout = BoxLayout(this, BoxLayout.X_AXIS)
         add(themeToggleButton)
@@ -66,6 +70,8 @@ class BottomBar(
         val rightInfoPanel = JPanel().apply {
             layout = BoxLayout(this, BoxLayout.X_AXIS)
 
+            addSpacer(this)
+            add(tempLabel)
             addSpacer(this)
             add(zoomLabel)
             addSpacer(this)
