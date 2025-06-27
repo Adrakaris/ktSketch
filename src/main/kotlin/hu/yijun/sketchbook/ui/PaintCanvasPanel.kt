@@ -3,7 +3,11 @@ package hu.yijun.sketchbook.ui
 import com.formdev.flatlaf.FlatClientProperties
 import hu.yijun.sketchbook.constants.AppColours
 import hu.yijun.sketchbook.presenter.CanvasPresenter
-import hu.yijun.sketchbook.util.*
+import hu.yijun.sketchbook.tools.ToolManager
+import hu.yijun.sketchbook.util.IntCoord
+import hu.yijun.sketchbook.util.View
+import hu.yijun.sketchbook.util.koinInject
+import hu.yijun.sketchbook.util.toIntCoord
 import org.koin.core.component.KoinComponent
 import java.awt.*
 import java.awt.event.*
@@ -11,7 +15,6 @@ import java.awt.geom.AffineTransform
 import javax.swing.AbstractAction
 import javax.swing.JPanel
 import javax.swing.KeyStroke
-import javax.swing.SwingUtilities
 
 interface CanvasView {
     val canvasSize: IntCoord
@@ -21,13 +24,14 @@ interface CanvasView {
 }
 
 class PaintCanvasPanel(
-    private val presenter: CanvasPresenter = koinInject()
+    private val presenter: CanvasPresenter = koinInject(),
+    toolManager: ToolManager = koinInject()
 ) : JPanel(), CanvasView, KoinComponent {
 
     private var image: Image? = null
     private var imageView: View? = null
     // Mac three finger drag has a cooldown period where the mouse is still pressed but you are not pressing the drag
-    // this works great in general but causes funny behavious if we allow undos to happen whilst the mouse is down and
+    // this works great in general but causes funny behaviours if we allow undos to happen whilst the mouse is down and
     // drawing (anything which doesn't edit the canvas / cause an undo is fine)
     private var actionActive = false
 
@@ -39,13 +43,19 @@ class PaintCanvasPanel(
 
         addComponentListener(CanvasAdapter(size))
         addMouseWheelListener { e ->
-            val normalisedPos = normaliseMouse(e.x, e.y)
             val velocity = e.preciseWheelRotation
-            presenter.zoom(normalisedPos, velocity)
+            presenter.zoom(e.point.toIntCoord(), velocity)
         }
-        val mouseAdapter = CanvasMouseAdapter()
-        addMouseListener(mouseAdapter)
-        addMouseMotionListener(mouseAdapter)
+
+        addMouseListener(toolManager.mouseAdapter)
+        addMouseMotionListener(toolManager.mouseAdapter)
+
+        addMouseMotionListener(object : MouseMotionAdapter() {
+            override fun mouseMoved(e: MouseEvent) {
+                val imageCoords = presenter.toImageCoords(e.point.toIntCoord())
+                presenter.mouseOnImage = imageCoords
+            }
+        })
 
         val inputMap = getInputMap(WHEN_IN_FOCUSED_WINDOW)
         val actionMap = actionMap
@@ -108,11 +118,6 @@ class PaintCanvasPanel(
     private fun initComponents() {
     }
 
-    private fun normaliseMouse(x: Int, y: Int): Coord {
-        val pos = Coord(x.toDouble(), y.toDouble())
-        return pos / canvasSize.toCoord()
-    }
-
     private inner class CanvasAdapter(initialSize: Dimension) : ComponentAdapter() {
         private var prevSize = initialSize
 
@@ -124,63 +129,5 @@ class PaintCanvasPanel(
             presenter.onScreenResize(newSize.toIntCoord())
             prevSize = newSize
         }
-    }
-
-    private inner class CanvasMouseAdapter : MouseAdapter() {
-        private var lastPos: Point? = null
-
-        override fun mousePressed(e: MouseEvent) {
-            if (shouldPan(e)) {
-                lastPos = e.point
-            }
-
-            if (shouldDraw(e)) {
-                actionActive = true
-                presenter.startDrawAction()
-                val imageCoord = imageCoordsOfScreen(e.point.toIntCoord())
-                presenter.draw(imageCoord, imageCoord)
-                lastPos = e.point
-            }
-        }
-
-        override fun mouseReleased(e: MouseEvent) {
-            actionActive = false
-            presenter.stopDrawAction()
-            lastPos = null
-        }
-
-        override fun mouseDragged(e: MouseEvent) {
-            lastPos?.let {
-                if (shouldPan(e)) {
-                    val screenDelta = e.point.toIntCoord() - it.toIntCoord()
-                    val normalisedDelta = screenDelta.toCoord() / canvasSize
-                    presenter.pan(normalisedDelta)
-                    lastPos = e.point
-                }
-
-                if (shouldDraw(e)) {
-                    presenter.draw(imageCoordsOfScreen(e.point.toIntCoord()), imageCoordsOfScreen(it.toIntCoord()))
-                    lastPos = e.point
-                }
-            }
-        }
-
-        override fun mouseMoved(e: MouseEvent) {
-            val imageCoords = presenter.imageCoordsOf(normaliseMouse(e.x, e.y))
-            presenter.mouseOnImage = imageCoords
-        }
-
-        private fun imageCoordsOfScreen(point: IntCoord): IntCoord =
-            presenter.imageCoordsOf(normaliseMouse(point.x, point.y)).toIntCoord()
-
-        private fun shouldPan(e: MouseEvent): Boolean {
-            val isMiddle =
-                SwingUtilities.isMiddleMouseButton(e)
-            val isCtrlOrMeta = e.isControlDown || e.isMetaDown
-            val isLeft = SwingUtilities.isLeftMouseButton(e)
-            return isMiddle || (isCtrlOrMeta && isLeft)
-        }
-
-        private fun shouldDraw(e: MouseEvent) = !shouldPan(e)
     }
 }

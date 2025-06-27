@@ -4,6 +4,9 @@ import hu.yijun.sketchbook.model.CoroutineImageDrawer
 import hu.yijun.sketchbook.model.ImageDrawer
 import hu.yijun.sketchbook.presenter.CanvasPresenter
 import hu.yijun.sketchbook.presenter.ImageMetadataRepository
+import hu.yijun.sketchbook.tools.BrushTool
+import hu.yijun.sketchbook.tools.PanTool
+import hu.yijun.sketchbook.tools.ToolManager
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.koin.core.definition.KoinDefinition
@@ -16,6 +19,9 @@ import org.koin.dsl.onClose
 val mainModule = module {
     singleOf(::CoroutineImageDrawer).closeable() bind ImageDrawer::class
     single { CanvasPresenter(get()) }.binds(arrayOf(ImageMetadataRepository::class))
+    single { BrushTool(get()) }
+    single { PanTool(get()) }
+    single { ToolManager(get(), get()) }
 }
 
 inline fun <reified T : Any> koinInject(): T {

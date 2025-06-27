@@ -118,9 +118,10 @@ class CanvasPresenter(
         }
     }
 
-    fun zoom(normalisedPos: Coord, velocity: Double) {
+    fun zoom(canvasPosition: IntCoord, velocity: Double) {
         imageModel?.let { model ->
-            val positionOnImage = getImageCoordinates(normalisedPos, model.view)
+            val positionOnImage = toImageCoords(canvasPosition)
+
             val zoom = -velocity * ZOOM_FACTOR
 
             model.changeZoom(zoom, positionOnImage)
@@ -130,9 +131,9 @@ class CanvasPresenter(
         }
     }
 
-    fun pan(normalisedDelta: Coord) {
+    fun pan(screenDelta: IntCoord) {
         imageModel?.let { model ->
-            val imageDelta = normalisedDelta * model.view.size
+            val imageDelta = (normaliseCanvasPosition(screenDelta)) * model.view.size
             model.moveView(-imageDelta)
             notifyImageDataListeners()
             paint()
@@ -147,8 +148,7 @@ class CanvasPresenter(
         }
     }
 
-    fun imageCoordsOf(normalisedPos: Coord) =
-        imageModel?.let { getImageCoordinates(normalisedPos, it.view) } ?: Coord.ZERO
+    fun toImageCoords(canvasPos: IntCoord): Coord = imageCoordsOf(normaliseCanvasPosition(canvasPos))
 
     fun startDrawAction() {
         imageModel?.startEdit()
@@ -168,11 +168,21 @@ class CanvasPresenter(
         paint()
     }
 
+    private fun imageCoordsOf(normalisedPos: Coord) =
+        imageModel?.let { getImageCoordinates(normalisedPos, it.view) } ?: Coord.ZERO
+
+    private fun normaliseCanvasPosition(canvasPos: IntCoord): Coord {
+        canvas?.let {
+            return canvasPos.toCoord() / it.canvasSize.toCoord()
+        }
+        return Coord.ZERO
+    }
+
     private var shouldUpdateImageAfterDraw = false
 
     /** Positions in image coordinates */
     @OptIn(DelicateCoroutinesApi::class)
-    fun draw(position: IntCoord, prevPosition: IntCoord, color: Color = Color.BLACK, radius: Int = 10) {
+    fun draw(position: IntCoord, prevPosition: IntCoord, color: Color, radius: Int) {
         if (imageModel == null) return
 
         val command = DrawInterpolatedLine(position, prevPosition, color, radius)
